@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "extracraftx_togglewalk",
-  "version": "1.1.0",
+  "version": "1.2.0",
 
   "name": "ToggleWalk",
   "description": "Makes it so that various controls in Minecraft now toggle instead!",
