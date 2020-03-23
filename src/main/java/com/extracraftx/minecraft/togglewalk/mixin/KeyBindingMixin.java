@@ -15,13 +15,22 @@ import net.minecraft.client.options.KeyBinding;
 
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin implements ToggleableKeyBinding{
-    private boolean toggled = false;
 
-    private void toggle() {
-        toggled = !toggled;
-    }
+    /**
+     * How much time (in ticks) the player has to release the key after
+     * first pressing it for it to count as a "key tap".
+     *
+     * 20 ticks = 1 second
+     */
+    private final static long KEY_TAP_DELAY = 5; // 0.25 seconds
+
+    private boolean toggled              = false;
+    private long    key_release_deadline = -1;
 
     private void setToggled(boolean toggled) {
+        if (this.toggled != toggled)
+            key_release_deadline = -1;
+
         this.toggled = toggled;
     }
 
@@ -41,8 +50,24 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
             System.err.println("ERROR: toggle and untoggle pressed at same " +
                     "time!!");
 
-        if(wasPressed)
-            toggle();
+        // We want to only toggle to on if the player briefly taps the key.
+        // That way if the player holds down "W" to walk around for a few
+        // second it won't count as a tap, WON'T toggle it on, and when
+        // the player releases the key the PC will stop walking.
+        if(wasPressed) {
+            if(toggled)
+                setToggled(false);
+            else if(key_release_deadline == -1)
+                key_release_deadline = time + KEY_TAP_DELAY;
+        } else {
+            if (!toggled && key_release_deadline != -1) {
+                if(time <= key_release_deadline)
+                    setToggled(true);
+
+                key_release_deadline = -1;
+            }
+        }
+
         if(oppositeWasPressed)
             setToggled(false);
     }
