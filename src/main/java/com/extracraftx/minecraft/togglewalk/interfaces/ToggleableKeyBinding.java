@@ -16,16 +16,4 @@ public interface ToggleableKeyBinding {
      */
     public void handleToggleTick(long time, boolean wasPressed,
                                  boolean oppositeWasPressed);
-
-    /**
-     * We can't directly reference the KeyBindingMixin class from within itself
-     * because of the way the Sponge classloder works, so we can't reference
-     * the private members of other intances of this class.  For instance, this
-     * is illegal run time:
-     *
-     *     opposite.toggled = false;
-     *
-     * Do note that the code will compile, even though it won't run.
-     */
-    public void setToggled(boolean toggled);
 }

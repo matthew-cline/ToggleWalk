@@ -21,7 +21,11 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
         toggled = !toggled;
     }
 
-   /////////////////////// Implements ToggleableKeyBinding /////////////////
+    private void setToggled(boolean toggled) {
+        this.toggled = toggled;
+    }
+
+    /////////////////////// Implements ToggleableKeyBinding /////////////////
 
     /**
      * We can't access the method KeyBinding.wasPressed(), created by Sponge
@@ -41,21 +45,6 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
             toggle();
         if(oppositeWasPressed)
             setToggled(false);
-    }
-
-    /**
-     * We can't directly reference the KeyBindingMixin class here because
-     * of the way the Sponge classloder works, so we can't reference the
-     * private members of other intances of this class.  For instance, this
-     * is illegal run time:
-     *
-     *     opposite.toggled = false;
-     *
-     * Do note that the code will compile, even though it won't run.
-     */
-    @Override
-    public void setToggled(boolean toggled) {
-        this.toggled = toggled;
     }
 
     @Override
