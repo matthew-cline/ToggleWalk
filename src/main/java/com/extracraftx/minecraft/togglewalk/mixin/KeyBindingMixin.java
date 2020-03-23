@@ -15,9 +15,9 @@ import net.minecraft.client.options.KeyBinding;
 
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin implements ToggleableKeyBinding{
-    
     private boolean toggled = false;
 
+    /////////////////////// Implements ToggleableKeyBinding /////////////////
     @Override
     public void toggle() {
         toggled = !toggled;
@@ -27,7 +27,20 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
     public void setToggled(boolean value) {
         toggled = value;
     }
-    
+
+    @Override
+    public Map<String, KeyBinding> getKeysIdMap() {
+        return getKeysById();
+    }
+
+    /////////////////////////// Non-interface methods ////////////////////////
+
+    /*
+     * NOTE: this seems to create a wasPressed() method in
+     * net.minecraft.client.options.KeyBinding which returns what the value
+     * WOULD be if our injected code hadn't messed with anything.  However, I
+     * can't find any documentation for this.
+     */
     @Inject(method = "isPressed", at = @At("HEAD"), cancellable = true)
     public void onIsPressed(CallbackInfoReturnable<Boolean> info) {
         if(toggled){
@@ -39,10 +52,4 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
     public static Map<String, KeyBinding> getKeysById(){
         throw new NotImplementedException("keysById mixin failed to apply.");
     }
-
-    @Override
-    public Map<String, KeyBinding> getKeysIdMap() {
-        return getKeysById();
-    }
-
 }
