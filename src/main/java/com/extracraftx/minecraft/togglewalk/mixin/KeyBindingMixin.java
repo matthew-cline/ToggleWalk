@@ -15,25 +15,13 @@ import net.minecraft.client.options.KeyBinding;
 
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin implements ToggleableKeyBinding{
-    private boolean              toggled = false;
-    private ToggleableKeyBinding opposite = null;
+    private boolean toggled = false;
 
     private void toggle() {
         toggled = !toggled;
     }
 
    /////////////////////// Implements ToggleableKeyBinding /////////////////
-
-    @Override
-    public void init(ToggleableKeyBinding opposite) {
-        if (this.opposite != null) {
-            System.err.println("WARNING: init() already called on " +
-                    "KeyBindingMixin");
-            return;
-        }
-
-        this.opposite = opposite;
-    }
 
     /**
      * We can't access the method KeyBinding.wasPressed(), created by Sponge
@@ -45,10 +33,14 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
     @Override
     public void handleToggleTick(long time, boolean wasPressed,
                                  boolean oppositeWasPressed) {
+        if (wasPressed && oppositeWasPressed)
+            System.err.println("ERROR: toggle and untoggle pressed at same " +
+                    "time!!");
+
         if(wasPressed)
             toggle();
         if(oppositeWasPressed)
-            opposite.setToggled(false);
+            setToggled(false);
     }
 
     /**

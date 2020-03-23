@@ -5,7 +5,6 @@ import java.util.Map;
 import net.minecraft.client.options.KeyBinding;
 
 public interface ToggleableKeyBinding {
-    public void                   init(ToggleableKeyBinding opposite);
     public Map<String,KeyBinding> getKeysIdMap();
 
     /**

@@ -56,13 +56,11 @@ public class ToggleWalk implements ClientModInitializer {
         baseBindings = new KeyBinding[Config.INSTANCE.toggles.length];
 
         for(int i = 0; i < bindings.length; i++){
-            Toggle               toggle = Config.INSTANCE.toggles[i];
+            Toggle toggle = Config.INSTANCE.toggles[i];
 
             baseBindings[i] = keysById.get("key." + toggle.toggle);
             opposites[i]    = keysById.get("key." + toggle.untoggle);
             bindings[i]     = (ToggleableKeyBinding) baseBindings[i];
-
-            bindings[i].init( (ToggleableKeyBinding) opposites[i]);
         }
     }
 }
