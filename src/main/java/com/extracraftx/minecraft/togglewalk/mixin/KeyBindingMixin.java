@@ -17,12 +17,12 @@ import net.minecraft.client.options.KeyBinding;
 public abstract class KeyBindingMixin implements ToggleableKeyBinding{
 
     /**
-     * How much time (in ticks) the player has to release the key after
-     * first pressing it for it to count as a "key tap".
+     * How much time (in ticks) the player has to release the key after first
+     * pressing it for it to count as a "key tap".
      *
      * 20 ticks = 1 second
      */
-    private final static long KEY_TAP_DELAY = 5; // 0.25 seconds
+    private final static long KEY_TAP_DELAY = 2; // 0.1 seconds
 
     private boolean toggled              = false;
     private boolean disabled             = false;
