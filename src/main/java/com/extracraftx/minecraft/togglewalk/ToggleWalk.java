@@ -71,18 +71,24 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     }
 
     private void cmdOn(ClientPlayerEntity sender) {
-        sender.addChatMessage(new LiteralText("on on on"), false);
-
+        for(int i = 0; i < bindings.length; i++) {
+            bindings[i].setDisabled(false);
+        }
+        sender.addChatMessage(new LiteralText("toggling enabled"), false);
     }
 
     private void cmdOff(ClientPlayerEntity sender) {
-        sender.addChatMessage(new LiteralText("off off off"), false);
+        for(int i = 0; i < bindings.length; i++) {
+            bindings[i].setDisabled(true);
+        }
+        sender.addChatMessage(new LiteralText("toggling disabled"), false);
     }
 
     private void cmdHelp(ClientPlayerEntity sender) {
-        sender.addChatMessage(new LiteralText("help help"), false);
+        String str = "/tw off: disable ToggleWalk toggling\n" +
+                     "/tw on:  enable ToggleWalk toggling";
+        sender.addChatMessage(new LiteralText(str), false);
     }
-
 
     ////////////////////////////////////////////////////////////////////////
     ////////////////////// ClientModInitializer methods ////////////////////
@@ -118,6 +124,12 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
                 .then(
                     literal("off").executes(c->{
                         instance.cmdOff(MinecraftClient.getInstance().player);
+                        return 1;
+                    })
+                )
+                .then(
+                    literal("help").executes(c->{
+                        instance.cmdHelp(MinecraftClient.getInstance().player);
                         return 1;
                     })
                 )

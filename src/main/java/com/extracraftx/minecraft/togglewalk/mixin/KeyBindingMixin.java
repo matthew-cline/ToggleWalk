@@ -25,9 +25,13 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
     private final static long KEY_TAP_DELAY = 5; // 0.25 seconds
 
     private boolean toggled              = false;
+    private boolean disabled             = false;
     private long    key_release_deadline = -1;
 
     private void setToggled(boolean toggled) {
+        if (disabled)
+            toggled = false;
+
         if (this.toggled != toggled)
             key_release_deadline = -1;
 
@@ -46,6 +50,9 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
     @Override
     public void handleToggleTick(long time, boolean wasPressed,
                                  boolean oppositeWasPressed) {
+        if (disabled)
+            return;
+
         if (wasPressed && oppositeWasPressed)
             System.err.println("ERROR: toggle and untoggle pressed at same " +
                     "time!!");
@@ -70,6 +77,15 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
 
         if(oppositeWasPressed)
             setToggled(false);
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+        if (disabled) {
+            setToggled(false);
+            key_release_deadline = -1;
+        }
     }
 
     @Override
