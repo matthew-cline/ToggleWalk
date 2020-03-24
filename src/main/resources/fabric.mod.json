@@ -21,6 +21,9 @@
   "entrypoints": {
     "client": [
       "com.extracraftx.minecraft.togglewalk.ToggleWalk"
+    ],
+    "cotton-client-commands": [
+      "com.extracraftx.minecraft.togglewalk.ToggleWalk"
     ]
   },
   "mixins": [

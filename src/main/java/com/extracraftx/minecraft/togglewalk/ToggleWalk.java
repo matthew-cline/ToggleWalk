@@ -7,24 +7,30 @@ import com.extracraftx.minecraft.togglewalk.config.Config.Toggle;
 import com.extracraftx.minecraft.togglewalk.interfaces.ToggleableKeyBinding;
 import com.extracraftx.minecraft.togglewalk.mixin.KeyBindingMixin;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.text.LiteralText;
 
-public class ToggleWalk implements ClientModInitializer {
+import com.mojang.brigadier.CommandDispatcher;
+
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.event.client.ClientTickCallback;
+
+import static io.github.cottonmc.clientcommands.ArgumentBuilders.argument;
+import static io.github.cottonmc.clientcommands.ArgumentBuilders.literal;
+import        io.github.cottonmc.clientcommands.ClientCommandPlugin;
+import        io.github.cottonmc.clientcommands.ClientCommands;
+import        io.github.cottonmc.clientcommands.CottonClientCommandSource;
+
+public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
 
     private static Map<String, KeyBinding> keysById;
+    private static ToggleWalk              instance;
 
     private ToggleableKeyBinding[] bindings;
     private KeyBinding[]           opposites;
     private KeyBinding[]           baseBindings;
-
-    @Override
-    public void onInitializeClient() {
-        ClientTickCallback.EVENT.register((mc)->{
-            onTick(mc);
-        }); }
 
     public void onTick(MinecraftClient mc){
         if(bindings == null){
@@ -62,5 +68,63 @@ public class ToggleWalk implements ClientModInitializer {
             opposites[i]    = keysById.get("key." + toggle.untoggle);
             bindings[i]     = (ToggleableKeyBinding) baseBindings[i];
         }
+    }
+
+    private void cmdOn(ClientPlayerEntity sender) {
+        sender.addChatMessage(new LiteralText("on on on"), false);
+
+    }
+
+    private void cmdOff(ClientPlayerEntity sender) {
+        sender.addChatMessage(new LiteralText("off off off"), false);
+    }
+
+    private void cmdHelp(ClientPlayerEntity sender) {
+        sender.addChatMessage(new LiteralText("help help"), false);
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////// ClientModInitializer methods ////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    @Override
+    public void onInitializeClient() {
+        instance = this;
+        ClientTickCallback.EVENT.register((mc)->{
+            onTick(mc);
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////// ClientCommandPlugin methods /////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * NOTE: this code only works with Minecraft 1.15+, and is incompatible
+     * with 1.14
+     */
+    @Override
+    public
+    void registerCommands(CommandDispatcher<CottonClientCommandSource> cd) {
+        cd.register(
+            literal("tw")
+                .then(
+                    literal("on").executes(c->{
+                        instance.cmdOn(MinecraftClient.getInstance().player);
+                        return 1;
+                    })
+                )
+                .then(
+                    literal("off").executes(c->{
+                        instance.cmdOff(MinecraftClient.getInstance().player);
+                        return 1;
+                    })
+                )
+                .executes(c->{
+                    instance.cmdHelp(MinecraftClient.getInstance().player);
+                    return 1;
+                })
+        );
     }
 }
