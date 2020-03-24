@@ -1,0 +1,6 @@
+* Kaamil Jasani (https://github.com/ExtraCrafTX)
+  Original author of mod
+
+* Matthew Cline (https://github.com/matthew-cline)
+  * Tap key to toggle on
+  * "/tw on" and "/tw off" commands.

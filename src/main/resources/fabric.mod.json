@@ -6,7 +6,8 @@
   "name": "ToggleWalk",
   "description": "Makes it so that various controls in Minecraft now toggle instead!",
   "authors": [
-    "ExtraCrafTX"
+    "ExtraCrafTX",
+    "Matthew Cline"
   ],
   "contact": {
     "homepage": "https://minecraft.curseforge.com/projects/togglewalk/",
