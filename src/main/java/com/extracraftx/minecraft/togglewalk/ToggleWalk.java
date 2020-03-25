@@ -70,24 +70,34 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Isolate StringTextComponent vs LiteralText classes to here,
+     * to minimize code switch between Minecraft ver <= 1.14 and ver >= 1.15.
+     */
+    private void sendMsg(ClientPlayerEntity sender, String msg) {
+        sender.addChatMessage(new LiteralText(msg), false);
+    }
+
     private void cmdOn(ClientPlayerEntity sender) {
         for(int i = 0; i < bindings.length; i++) {
             bindings[i].setDisabled(false);
         }
-        sender.addChatMessage(new LiteralText("toggling enabled"), false);
+        sendMsg(sender, "toggling enabled");
     }
 
     private void cmdOff(ClientPlayerEntity sender) {
         for(int i = 0; i < bindings.length; i++) {
             bindings[i].setDisabled(true);
         }
-        sender.addChatMessage(new LiteralText("toggling disabled"), false);
+        sendMsg(sender, "toggling disabled");
     }
 
     private void cmdHelp(ClientPlayerEntity sender) {
         String str = "/tw off: disable ToggleWalk toggling\n" +
                      "/tw on:  enable ToggleWalk toggling";
-        sender.addChatMessage(new LiteralText(str), false);
+        sendMsg(sender, str);
     }
 
     ////////////////////////////////////////////////////////////////////////
