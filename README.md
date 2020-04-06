@@ -25,7 +25,7 @@ Requires the [Fabric API](https://minecraft.curseforge.com/projects/fabric).
 
 ## Config
 
-In the "`toggles`" array the `toggle` field is the key that will be toggled
+In the "`toggles`" array the "`toggle`" field is the key that will be toggled
 upon being tapped and the "`untoggle`" field (optional) is the key that, upon
 being tapped, will stop the toggled key. If the config file is deleted, a
 default one will be generated on the next start.
