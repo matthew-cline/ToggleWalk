@@ -96,10 +96,6 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Isolate StringTextComponent vs LiteralText classes to here,
-     * to minimize code switch between Minecraft ver <= 1.14 and ver >= 1.15.
-     */
     private void sendMsg(ClientPlayerEntity sender, String msg) {
         sender.addChatMessage(new LiteralText(msg), false);
     }
@@ -140,10 +136,6 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     ////////////////////////////////////////////////////////////////////////
 
 
-    /**
-     * NOTE: this code only works with Minecraft 1.15+, and is incompatible
-     * with 1.14
-     */
     @Override
     public
     void registerCommands(CommandDispatcher<CottonClientCommandSource> cd) {
