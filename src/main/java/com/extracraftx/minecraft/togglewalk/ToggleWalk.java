@@ -1,5 +1,7 @@
 package com.extracraftx.minecraft.togglewalk;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,14 +41,14 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     private Set<String>            usedBindings;
     private Map<String, Boolean>   wasPressed;
     private ClientWorld            prevTickWorld;
-    private String                 failMsg;
+    private List<String>           errMsgs;
 
     public void onTick(MinecraftClient mc) {
         // Wait for world to be available to give any error messages via
         // in-game chat.
         if (prevTickWorld == null && mc.world != null) {
-            if (modFailed && failMsg != null)
-                sendMsg(mc.player, failMsg);
+            for (String msg : errMsgs)
+                sendMsg(mc.player, "ToggleWalk error: " + msg);
         }
 
         prevTickWorld = mc.world;
@@ -77,6 +79,11 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
 
         long time = mc.world.getTime();
         for (int i = 0; i < bindings.length; i++) {
+            // Skip any entries where the user supplied a non-existent
+            // keybinding.
+            if (baseBindings[i] == null)
+                continue;
+
             boolean pressed    = wasPressed.get(baseBindings[i].getId());
             boolean oppPressed = opposites[i] == null ?
                 false : wasPressed.get(opposites[i].getId());
@@ -88,13 +95,14 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
         keysById = ((ToggleableKeyBinding)mc.options.keyForward).getKeysIdMap();
 
         usedBindings = new HashSet<>();
-        wasPressed = new HashMap<>();
+        wasPressed   = new HashMap<>();
+        errMsgs      = new ArrayList<>();
 
         Config conf = Config.getInstance();
 
         if (conf == null) {
             modFailed = true;
-            failMsg = "ToggleWalk error: couldn't load config file";
+            errMsgs.add("couldn't load config file");
             return;
         }
 
@@ -105,17 +113,33 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
         for (int i = 0; i < bindings.length; i++) {
             Toggle toggle = conf.toggles[i];
 
+            if (toggle.toggle == null) {
+                errMsgs.add("a 'toggles' entry is missing the 'toggle' field");
+                continue;
+            }
+
             baseBindings[i] = keysById.get("key." + toggle.toggle);
-            opposites[i]    = keysById.get("key." + toggle.untoggle);
             bindings[i]     = (ToggleableKeyBinding) baseBindings[i];
 
-            if (baseBindings[i] != null)
-                usedBindings.add(baseBindings[i].getId());
-            if (opposites[i] != null)
-                usedBindings.add(opposites[i].getId());
+            if (baseBindings[i] == null) {
+                errMsgs.add("no such keybinding as '" + toggle.toggle + "'");
+                continue;
+            }
 
-            bindings[i].setKeyTapDelay(conf.keyTapDelay);
+            usedBindings.add(baseBindings[i].getId());
             bindings[i].setID(toggle.toggle);
+            bindings[i].setKeyTapDelay(conf.keyTapDelay);
+
+            if (toggle.untoggle != null) {
+                opposites[i] = keysById.get("key." + toggle.untoggle);
+
+                if (opposites[i] == null) {
+                    errMsgs.add("no such keybinding as '" +
+                                toggle.untoggle + "'");
+                    continue;
+                }
+            }
+            usedBindings.add(opposites[i].getId());
         }
     }
 
