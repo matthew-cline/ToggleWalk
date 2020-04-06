@@ -10,6 +10,7 @@ import com.extracraftx.minecraft.togglewalk.mixin.KeyBindingMixin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.text.LiteralText;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -27,16 +28,31 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
 
     private static Map<String, KeyBinding> keysById;
     private static ToggleWalk              instance;
+    private static boolean                 modFailed;
 
     private ToggleableKeyBinding[] bindings;
     private KeyBinding[]           opposites;
     private KeyBinding[]           baseBindings;
+    private ClientWorld            prevTickWorld;
+    private String                 failMsg;
 
     public void onTick(MinecraftClient mc) {
+        // Wait for world to be available to give any error messages via
+        // in-game chat.
+        if (prevTickWorld == null && mc.world != null) {
+            if (modFailed && failMsg != null)
+                sendMsg(mc.player, failMsg);
+        }
+
+        prevTickWorld = mc.world;
+
+        if (modFailed)
+            return;
+
         if (bindings == null) {
             keysById = ((ToggleableKeyBinding)mc.options.keyForward).
                 getKeysIdMap();
-            load(mc);
+            load();
         }
 
         if (mc.world == null)
@@ -54,8 +70,14 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
         }
     }
 
-    public void load(MinecraftClient mc) {
+    public void load() {
         Config conf = Config.getInstance();
+
+        if (conf == null) {
+            modFailed = true;
+            failMsg = "ToggleWalk error: couldn't load config file";
+            return;
+        }
 
         bindings     = new ToggleableKeyBinding[conf.toggles.length];
         opposites    = new KeyBinding[conf.toggles.length];
