@@ -9,6 +9,7 @@ public interface ToggleableKeyBinding {
 
     public void setDisabled(boolean disabled);
     public void setKeyTapDelay(long delay);
+    public void setID(String ID);
 
     /**
      * We can't access the method KeyBinding.wasPressed(), created by Sponge

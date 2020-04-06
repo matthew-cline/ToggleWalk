@@ -27,6 +27,7 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
     private boolean toggled              = false;
     private boolean disabled             = false;
     private long    key_release_deadline = -1;
+    private String  ID                   = "UNSET";
 
     private void setToggled(boolean toggled) {
         if (disabled)
@@ -93,6 +94,12 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
     public void setKeyTapDelay(long delay) {
         keyTapDelay = delay;
     }
+
+    @Override
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
 
     @Override
     public Map<String, KeyBinding> getKeysIdMap() {
