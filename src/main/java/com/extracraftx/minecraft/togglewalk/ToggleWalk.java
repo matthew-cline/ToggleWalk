@@ -55,14 +55,14 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     }
 
     public void load(MinecraftClient mc) {
-        Config.loadConfigs();
+        Config conf = Config.getInstance();
 
-        bindings     = new ToggleableKeyBinding[Config.INSTANCE.toggles.length];
-        opposites    = new KeyBinding[Config.INSTANCE.toggles.length];
-        baseBindings = new KeyBinding[Config.INSTANCE.toggles.length];
+        bindings     = new ToggleableKeyBinding[conf.toggles.length];
+        opposites    = new KeyBinding[conf.toggles.length];
+        baseBindings = new KeyBinding[conf.toggles.length];
 
         for (int i = 0; i < bindings.length; i++) {
-            Toggle toggle = Config.INSTANCE.toggles[i];
+            Toggle toggle = conf.toggles[i];
 
             baseBindings[i] = keysById.get("key." + toggle.toggle);
             opposites[i]    = keysById.get("key." + toggle.untoggle);

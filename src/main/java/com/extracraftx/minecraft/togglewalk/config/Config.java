@@ -8,15 +8,23 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Config {
-    public static File configDir = new File("config");
-    public static File configFile = new File("config/togglewalk_config.json");
-    public static Gson gson = new GsonBuilder().setPrettyPrinting().setLenient().create();
-    public static Config INSTANCE = new Config();
+    private static File configDir = new File("config");
+    private static File configFile = new File("config/togglewalk_config.json");
+    private static Gson gson = new GsonBuilder().setPrettyPrinting().
+        setLenient().create();
+    private static Config INSTANCE = null;
 
-    public Toggle[] toggles = new Toggle[]{new Toggle("forward", "back"), new Toggle("sneak", null)};
+    public Toggle[] toggles = new Toggle[]{
+        new Toggle("forward", "back"),
+            new Toggle("sneak", null)
+    };
 
-    public static void loadConfigs() {
-        try {
+    public static synchronized Config getInstance() {
+        if (INSTANCE != null)
+            return INSTANCE;
+
+        INSTANCE = new Config();
+        try{
             configDir.mkdirs();
             if (configFile.createNewFile()) {
                 FileWriter fw = new FileWriter(configFile);
@@ -32,7 +40,10 @@ public class Config {
         }
         catch(Exception e) {
             e.printStackTrace();
+            INSTANCE = null;
         }
+
+        return INSTANCE;
     }
 
     public static void saveConfigs() {
