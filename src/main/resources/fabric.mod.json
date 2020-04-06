@@ -1,18 +1,28 @@
 {
   "schemaVersion": 1,
-  "id": "extracraftx_togglewalk",
+  "id": "matthew_cline_togglewalk",
   "version": "1.2.0",
 
-  "name": "ToggleWalk",
+  "name": "ToggleWalk Mk. II",
   "description": "Makes it so that various controls in Minecraft now toggle instead!",
   "authors": [
-    "ExtraCrafTX",
-    "Matthew Cline"
+    {
+      "name": "ExtraCrafTX",
+      "contact": {
+        "homepage": "https://github.com/ExtraCrafTX"
+      }
+    },
+    {
+      "name": "Matthew Cline",
+      "contact": {
+        "homepage": "https://github.com/matthew-cline"
+      }
+    }
   ],
   "contact": {
-    "homepage": "https://minecraft.curseforge.com/projects/togglewalk/",
-    "issues": "https://minecraft.curseforge.com/projects/togglewalk/issues/",
-    "sources": "https://github.com/ExtraCrafTX/ToggleWalk"
+    "homepage": "https://minecraft.curseforge.com/projects/togglewalk_mk_ii/",
+    "issues": "https://minecraft.curseforge.com/projects/togglewalk_mk_ii/issues/",
+    "sources": "https://github.com/matthew-cline/ToggleWalk_Mk_II"
   },
 
   "license": "CC BY-NC-SA 4.0",
@@ -27,6 +37,7 @@
       "com.extracraftx.minecraft.togglewalk.ToggleWalk"
     ]
   },
+
   "mixins": [
     "extracraftx_togglewalk.mixins.json"
   ],
@@ -35,6 +46,11 @@
     "fabricloader": ">=0.4.0",
     "fabric": "*"
   },
+
+  "breaks" : {
+    "extracraftx_togglewalk": "*"
+  },
+
   "custom": {
     "modmenu:clientsideOnly": true
   }
