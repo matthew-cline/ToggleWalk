@@ -8,8 +8,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Config {
-    private static File configDir = new File("config");
+    private static File configDir  = new File("config");
     private static File configFile = new File("config/togglewalk_mk_ii.json");
+    private static File oldFile    = new File("config/togglewalk_config.json");
+
     private static Gson gson = new GsonBuilder().setPrettyPrinting().
         setLenient().create();
     private static Config INSTANCE = null;
@@ -26,19 +28,25 @@ public class Config {
         if (INSTANCE != null)
             return INSTANCE;
 
-        INSTANCE = new Config();
         try{
             configDir.mkdirs();
             if (configFile.createNewFile()) {
+                INSTANCE = new Config();
+
+                // If a config file for the original ToggleWalk mod exists
+                // then import its contents.
+                if (oldFile.exists()) {
+                    FileReader fr = new FileReader(oldFile);
+                    INSTANCE.toggles = gson.fromJson(fr, Toggle[].class);
+                    fr.close();
+                }
                 FileWriter fw = new FileWriter(configFile);
-                //fw.append(gson.toJson(INSTANCE.toggles));
                 fw.append(gson.toJson(INSTANCE));
                 fw.close();
             }
             else {
                 FileReader fr = new FileReader(configFile);
                 INSTANCE = gson.fromJson(fr, Config.class);
-                // INSTANCE.toggles = gson.fromJson(fr, Toggle[].class);
                 fr.close();
             }
         }
