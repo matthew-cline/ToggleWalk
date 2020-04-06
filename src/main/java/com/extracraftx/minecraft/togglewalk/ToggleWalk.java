@@ -1,6 +1,9 @@
 package com.extracraftx.minecraft.togglewalk;
 
 import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.extracraftx.minecraft.togglewalk.config.Config;
 import com.extracraftx.minecraft.togglewalk.config.Config.Toggle;
@@ -33,6 +36,8 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     private ToggleableKeyBinding[] bindings;
     private KeyBinding[]           opposites;
     private KeyBinding[]           baseBindings;
+    private Set<String>            usedBindings;
+    private Map<String, Boolean>   wasPressed;
     private ClientWorld            prevTickWorld;
     private String                 failMsg;
 
@@ -50,27 +55,41 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
             return;
 
         if (bindings == null) {
-            keysById = ((ToggleableKeyBinding)mc.options.keyForward).
-                getKeysIdMap();
-            load();
+            load(mc);
+            if (modFailed)
+                return;
         }
 
         if (mc.world == null)
             // No world yet in which to do anything.
             return;
 
+        // NOTE: KeyBindingMixin can't access KeyBinding.wasPressed(), so we
+        // have to do it for them.
+        //
+        // NOTE: wasPressed() has the side effect of resetting the value to
+        // the default (false) and is only updated on the next tick.  Since
+        // we might invoke wasPressed() twice for the same binding (once
+        // for toggle and once for untoggle) we have to remmeber what the
+        // return value was when it was first invoked this tick.
+        for (String id : usedBindings)
+            wasPressed.put(id, keysById.get(id).wasPressed());
+
         long time = mc.world.getTime();
         for (int i = 0; i < bindings.length; i++) {
-            // NOTE: KeyBindingMixin can't access KeyBinding.wasPressed(),
-            // so we have to do it for them.
-            boolean pressed    = baseBindings[i].wasPressed();
+            boolean pressed    = wasPressed.get(baseBindings[i].getId());
             boolean oppPressed = opposites[i] == null ?
-                false : opposites[i].wasPressed();
+                false : wasPressed.get(opposites[i].getId());
             bindings[i].handleToggleTick(time, pressed, oppPressed);
         }
     }
 
-    public void load() {
+    private void load(MinecraftClient mc) {
+        keysById = ((ToggleableKeyBinding)mc.options.keyForward).getKeysIdMap();
+
+        usedBindings = new HashSet<>();
+        wasPressed = new HashMap<>();
+
         Config conf = Config.getInstance();
 
         if (conf == null) {
@@ -89,6 +108,11 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
             baseBindings[i] = keysById.get("key." + toggle.toggle);
             opposites[i]    = keysById.get("key." + toggle.untoggle);
             bindings[i]     = (ToggleableKeyBinding) baseBindings[i];
+
+            if (baseBindings[i] != null)
+                usedBindings.add(baseBindings[i].getId());
+            if (opposites[i] != null)
+                usedBindings.add(opposites[i].getId());
 
             bindings[i].setKeyTapDelay(conf.keyTapDelay);
             bindings[i].setID(toggle.toggle);

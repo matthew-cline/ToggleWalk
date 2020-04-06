@@ -110,13 +110,19 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
 
     /*
      * NOTE: this seems to create a wasPressed() method in
-     * net.minecraft.client.options.KeyBinding which returns what the value
-     * WOULD be if our injected code hadn't messed with anything.  However, I
-     * can't find any documentation for this.
+     * net.minecraft.client.options.KeyBinding which returns what the value of
+     * isPressed() WOULD be if our injected code hadn't messed with anything.
+     * However, I can't find any documentation for this.
      *
-     * Also note that do to the way that Sponge works that the wasPressed()
-     * method can't be accessed from within this class, no matter what
-     * coding tricks are done; any attempt to do so in code whill result
+     * Also note that a side effect of the method is that the value to be
+     * returned is cleared to the default (false) and the value is only
+     * refreshed on the next tick, so if wasPressed() might be invoked more
+     * than once over a single tick then instead you must save the result of
+     * the first invocation and then refer to that saved value.
+     *
+     * Also also note that due to the way that Sponge works that the
+     * wasPressed() method can't be accessed from within this class, no matter
+     * what coding tricks are done; any attempt to do so in code whill result
      * in an IllegalClassLoadError at runtime.
      */
     @Inject(method = "isPressed", at = @At("HEAD"), cancellable = true)
