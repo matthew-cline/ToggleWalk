@@ -89,6 +89,8 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
             baseBindings[i] = keysById.get("key." + toggle.toggle);
             opposites[i]    = keysById.get("key." + toggle.untoggle);
             bindings[i]     = (ToggleableKeyBinding) baseBindings[i];
+
+            bindings[i].setKeyTapDelay(conf.keyTapDelay);
         }
     }
 

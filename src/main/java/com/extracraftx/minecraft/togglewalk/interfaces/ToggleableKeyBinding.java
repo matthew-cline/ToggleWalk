@@ -8,6 +8,8 @@ public interface ToggleableKeyBinding {
     public Map<String,KeyBinding> getKeysIdMap();
 
     public void setDisabled(boolean disabled);
+    public void setKeyTapDelay(long delay);
+
     /**
      * We can't access the method KeyBinding.wasPressed(), created by Sponge
      * due to injecting into KeyBinding.isPressed(), due to the way that

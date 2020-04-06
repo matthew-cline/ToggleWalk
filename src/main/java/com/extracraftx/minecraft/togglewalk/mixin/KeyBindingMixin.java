@@ -22,7 +22,7 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
      *
      * 20 ticks = 1 second
      */
-    private final static long KEY_TAP_DELAY = 2; // 0.1 seconds
+    private long keyTapDelay = 1; // 0.05 seconds
 
     private boolean toggled              = false;
     private boolean disabled             = false;
@@ -65,7 +65,7 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
             if (toggled)
                 setToggled(false);
             else if (key_release_deadline == -1)
-                key_release_deadline = time + KEY_TAP_DELAY;
+                key_release_deadline = time + keyTapDelay;
         }
         else {
             if (!toggled && key_release_deadline != -1) {
@@ -87,6 +87,11 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
             setToggled(false);
             key_release_deadline = -1;
         }
+    }
+
+    @Override
+    public void setKeyTapDelay(long delay) {
+        keyTapDelay = delay;
     }
 
     @Override

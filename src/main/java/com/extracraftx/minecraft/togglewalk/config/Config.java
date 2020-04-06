@@ -9,15 +9,18 @@ import com.google.gson.GsonBuilder;
 
 public class Config {
     private static File configDir = new File("config");
-    private static File configFile = new File("config/togglewalk_config.json");
+    private static File configFile = new File("config/togglewalk_mk_ii.json");
     private static Gson gson = new GsonBuilder().setPrettyPrinting().
         setLenient().create();
     private static Config INSTANCE = null;
 
     public Toggle[] toggles = new Toggle[]{
         new Toggle("forward", "back"),
-            new Toggle("sneak", null)
+        new Toggle("sprint",  "sneak"),
+        new Toggle("sneak",   "jump")
     };
+
+    public long keyTapDelay = 1;
 
     public static synchronized Config getInstance() {
         if (INSTANCE != null)
@@ -28,13 +31,14 @@ public class Config {
             configDir.mkdirs();
             if (configFile.createNewFile()) {
                 FileWriter fw = new FileWriter(configFile);
-                fw.append(gson.toJson(INSTANCE.toggles));
+                //fw.append(gson.toJson(INSTANCE.toggles));
+                fw.append(gson.toJson(INSTANCE));
                 fw.close();
             }
             else {
                 FileReader fr = new FileReader(configFile);
-                // INSTANCE = gson.fromJson(fr, Config.class);
-                INSTANCE.toggles = gson.fromJson(fr, Toggle[].class);
+                INSTANCE = gson.fromJson(fr, Config.class);
+                // INSTANCE.toggles = gson.fromJson(fr, Toggle[].class);
                 fr.close();
             }
         }
@@ -58,7 +62,12 @@ public class Config {
         }
     }
 
-    public class Toggle {
+    //////////////////////////////////////////////////////////////////////////
+
+
+    // NOTE: this needs to be a local class (with static) rather than
+    // an inner class (without static) to work properly with GSON
+    public static class Toggle {
         public String toggle;
         public String untoggle;
 
