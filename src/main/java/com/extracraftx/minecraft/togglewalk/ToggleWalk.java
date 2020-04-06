@@ -32,8 +32,8 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     private KeyBinding[]           opposites;
     private KeyBinding[]           baseBindings;
 
-    public void onTick(MinecraftClient mc){
-        if(bindings == null){
+    public void onTick(MinecraftClient mc) {
+        if (bindings == null) {
             keysById = ((ToggleableKeyBinding)mc.options.keyForward).
                 getKeysIdMap();
             load(mc);
@@ -44,7 +44,7 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
             return;
 
         long time = mc.world.getTime();
-        for(int i = 0; i < bindings.length; i++) {
+        for (int i = 0; i < bindings.length; i++) {
             // NOTE: KeyBindingMixin can't access KeyBinding.wasPressed(),
             // so we have to do it for them.
             boolean pressed    = baseBindings[i].wasPressed();
@@ -54,14 +54,14 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
         }
     }
 
-    public void load(MinecraftClient mc){
+    public void load(MinecraftClient mc) {
         Config.loadConfigs();
 
         bindings     = new ToggleableKeyBinding[Config.INSTANCE.toggles.length];
         opposites    = new KeyBinding[Config.INSTANCE.toggles.length];
         baseBindings = new KeyBinding[Config.INSTANCE.toggles.length];
 
-        for(int i = 0; i < bindings.length; i++){
+        for (int i = 0; i < bindings.length; i++) {
             Toggle toggle = Config.INSTANCE.toggles[i];
 
             baseBindings[i] = keysById.get("key." + toggle.toggle);
@@ -81,14 +81,14 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     }
 
     private void cmdOn(ClientPlayerEntity sender) {
-        for(int i = 0; i < bindings.length; i++) {
+        for (int i = 0; i < bindings.length; i++) {
             bindings[i].setDisabled(false);
         }
         sendMsg(sender, "toggling enabled");
     }
 
     private void cmdOff(ClientPlayerEntity sender) {
-        for(int i = 0; i < bindings.length; i++) {
+        for (int i = 0; i < bindings.length; i++) {
             bindings[i].setDisabled(true);
         }
         sendMsg(sender, "toggling disabled");

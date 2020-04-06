@@ -61,21 +61,22 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
         // That way if the player holds down "W" to walk around for a few
         // second it won't count as a tap, WON'T toggle it on, and when
         // the player releases the key the PC will stop walking.
-        if(wasPressed) {
-            if(toggled)
+        if (wasPressed) {
+            if (toggled)
                 setToggled(false);
-            else if(key_release_deadline == -1)
+            else if (key_release_deadline == -1)
                 key_release_deadline = time + KEY_TAP_DELAY;
-        } else {
+        }
+        else {
             if (!toggled && key_release_deadline != -1) {
-                if(time <= key_release_deadline)
+                if (time <= key_release_deadline)
                     setToggled(true);
 
                 key_release_deadline = -1;
             }
         }
 
-        if(oppositeWasPressed)
+        if (oppositeWasPressed)
             setToggled(false);
     }
 
@@ -108,13 +109,13 @@ public abstract class KeyBindingMixin implements ToggleableKeyBinding{
      */
     @Inject(method = "isPressed", at = @At("HEAD"), cancellable = true)
     public void onIsPressed(CallbackInfoReturnable<Boolean> info) {
-        if(toggled){
+        if (toggled) {
             info.setReturnValue(true);
         }
     }
 
     @Accessor(value = "keysById")
-    public static Map<String, KeyBinding> getKeysById(){
+    public static Map<String, KeyBinding> getKeysById() {
         throw new NotImplementedException("keysById mixin failed to apply.");
     }
 }
