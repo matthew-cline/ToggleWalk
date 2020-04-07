@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "matthew_cline_togglewalk",
-  "version": "1.2.0",
+  "version": "1.2.1",
 
   "name": "ToggleWalk Mk. II",
   "description": "Makes it so that various controls in Minecraft now toggle instead!",
@@ -20,8 +20,8 @@
     }
   ],
   "contact": {
-    "homepage": "https://minecraft.curseforge.com/projects/togglewalk_mk_ii/",
-    "issues": "https://minecraft.curseforge.com/projects/togglewalk_mk_ii/issues/",
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/togglewalk-mk-ii",
+    "issues": "https://www.curseforge.com/minecraft/mc-mods/togglewalk-mk-ii/issues",
     "sources": "https://github.com/matthew-cline/ToggleWalk_Mk_II"
   },
 
