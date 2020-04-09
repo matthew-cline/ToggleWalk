@@ -3,7 +3,7 @@
 A sequel to the original
 [ToggleWalk](https://www.curseforge.com/minecraft/mc-mods/togglewalk) mod by
 [ExtraCraftTX](https://www.curseforge.com/members/extracraftx/followers).  The
-main differences are the you toggle by briefly tapping a key, and that toggling
+main differences are that you toggle by briefly tapping a key, and that toggling
 can be temporarily disabled.  [**WARNING**: If you have the original ToggleWalk
 mod installed you'll have to remove it to get ToggleWalk Mk. II to work.]
 
@@ -31,6 +31,7 @@ being tapped, will stop the toggled key. If the config file is deleted, a
 default one will be generated on the next start.
 
 The default Minecraft keybinds can be any of:
+
 * `forward`
 * `back`
 * `left`
