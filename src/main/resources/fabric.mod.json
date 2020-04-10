@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "matthew_cline_togglewalk",
-  "version": "1.2.1",
+  "version": "1.2.2",
 
   "name": "ToggleWalk Mk. II",
   "description": "Makes it so that various controls in Minecraft now toggle instead!",

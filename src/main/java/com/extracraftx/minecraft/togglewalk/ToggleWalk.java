@@ -35,9 +35,7 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     private static ToggleWalk              instance;
     private static boolean                 modFailed;
 
-    private ToggleableKeyBinding[] bindings;
-    private KeyBinding[]           opposites;
-    private KeyBinding[]           baseBindings;
+    private BindingTuple[]         tuples;
     private Set<String>            usedBindings;
     private Map<String, Boolean>   wasPressed;
     private ClientWorld            prevTickWorld;
@@ -56,7 +54,7 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
         if (modFailed)
             return;
 
-        if (bindings == null) {
+        if (tuples == null) {
             load(mc);
             if (modFailed)
                 return;
@@ -78,16 +76,11 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
             wasPressed.put(id, keysById.get(id).wasPressed());
 
         long time = mc.world.getTime();
-        for (int i = 0; i < bindings.length; i++) {
-            // Skip any entries where the user supplied a non-existent
-            // keybinding.
-            if (baseBindings[i] == null)
-                continue;
-
-            boolean pressed    = wasPressed.get(baseBindings[i].getId());
-            boolean oppPressed = opposites[i] == null ?
-                false : wasPressed.get(opposites[i].getId());
-            bindings[i].handleToggleTick(time, pressed, oppPressed);
+        for (int i = 0; i < tuples.length; i++) {
+            boolean pressed    = wasPressed.get(tuples[i].base.getId());
+            boolean oppPressed = tuples[i].opposite == null ?
+                false : wasPressed.get(tuples[i].opposite.getId());
+            tuples[i].toggleable.handleToggleTick(time, pressed, oppPressed);
         }
     }
 
@@ -106,41 +99,45 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
             return;
         }
 
-        bindings     = new ToggleableKeyBinding[conf.toggles.length];
-        opposites    = new KeyBinding[conf.toggles.length];
-        baseBindings = new KeyBinding[conf.toggles.length];
+        // Simply discard any conf.toggle entry with a missing or invalid
+        // "toggle" field, only keeping valid entries for other methods to
+        // loop over.
+        List<BindingTuple> tupleList = new ArrayList<>();
 
-        for (int i = 0; i < bindings.length; i++) {
-            Toggle toggle = conf.toggles[i];
+        for (int i = 0; i < conf.toggles.length; i++) {
+            Toggle       toggle = conf.toggles[i];
+            BindingTuple tup    = new BindingTuple();
 
             if (toggle.toggle == null) {
                 errMsgs.add("a 'toggles' entry is missing the 'toggle' field");
                 continue;
             }
 
-            baseBindings[i] = keysById.get("key." + toggle.toggle);
-            bindings[i]     = (ToggleableKeyBinding) baseBindings[i];
+            tup.base       = keysById.get("key." + toggle.toggle);
+            tup.toggleable = (ToggleableKeyBinding) tup.base;
 
-            if (baseBindings[i] == null) {
+            if (tup.base == null) {
                 errMsgs.add("no such keybinding as '" + toggle.toggle + "'");
                 continue;
             }
 
-            usedBindings.add(baseBindings[i].getId());
-            bindings[i].setID(toggle.toggle);
-            bindings[i].setKeyTapDelay(conf.keyTapDelay);
+            usedBindings.add(tup.base.getId());
+            tup.toggleable.setID(toggle.toggle);
+            tup.toggleable.setKeyTapDelay(conf.keyTapDelay);
 
             if (toggle.untoggle != null) {
-                opposites[i] = keysById.get("key." + toggle.untoggle);
+                tup.opposite = keysById.get("key." + toggle.untoggle);
 
-                if (opposites[i] == null) {
+                if (tup.opposite == null) {
                     errMsgs.add("no such keybinding as '" +
                                 toggle.untoggle + "'");
                     continue;
                 }
+                usedBindings.add(tup.opposite.getId());
             }
-            usedBindings.add(opposites[i].getId());
+            tupleList.add(tup);
         }
+        tuples = tupleList.toArray(new BindingTuple[0]);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -150,16 +147,14 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     }
 
     private void cmdOn(ClientPlayerEntity sender) {
-        for (int i = 0; i < bindings.length; i++) {
-            bindings[i].setDisabled(false);
-        }
+        for (int i = 0; i < tuples.length; i++)
+            tuples[i].toggleable.setDisabled(false);
         sendMsg(sender, "toggling enabled");
     }
 
     private void cmdOff(ClientPlayerEntity sender) {
-        for (int i = 0; i < bindings.length; i++) {
-            bindings[i].setDisabled(true);
-        }
+        for (int i = 0; i < tuples.length; i++)
+            tuples[i].toggleable.setDisabled(true);
         sendMsg(sender, "toggling disabled");
     }
 
@@ -213,5 +208,15 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
                     return 1;
                 })
         );
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
+    private static class BindingTuple {
+        public ToggleableKeyBinding toggleable;
+        public KeyBinding           opposite;
+        public KeyBinding           base;
     }
 }
