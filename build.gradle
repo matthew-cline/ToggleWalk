@@ -44,6 +44,9 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 
+	// Fixes Gradle 8.0 deprecation warnings.
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
 	from(sourceSets.main.resources.srcDirs) {
 		include "fabric.mod.json"
 		expand "version": project.version
