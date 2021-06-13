@@ -1,6 +1,6 @@
 plugins {
     // See https://fabricmc.net/wiki/documentation:fabric_loom
-	id 'fabric-loom' version '0.2.7-SNAPSHOT'
+	id 'fabric-loom' version '0.8-SNAPSHOT'
 
 	id 'maven-publish'
 }
