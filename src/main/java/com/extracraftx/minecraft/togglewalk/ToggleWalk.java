@@ -18,18 +18,11 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.text.LiteralText;
 
-import com.mojang.brigadier.CommandDispatcher;
-
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 
-import static io.github.cottonmc.clientcommands.ArgumentBuilders.argument;
-import static io.github.cottonmc.clientcommands.ArgumentBuilders.literal;
-import        io.github.cottonmc.clientcommands.ClientCommandPlugin;
-import        io.github.cottonmc.clientcommands.ClientCommands;
-import        io.github.cottonmc.clientcommands.CottonClientCommandSource;
-
-public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
+public class ToggleWalk implements ClientModInitializer {
 
     private static Map<String, KeyBinding> keysById;
     private static ToggleWalk              instance;
@@ -164,41 +157,24 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
         sendMsg(sender, str);
     }
 
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////// ClientModInitializer methods ////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    @Override
-    public void onInitializeClient() {
-        instance = this;
-        ClientTickCallback.EVENT.register((mc)->{
-            onTick(mc);
-        });
-    }
-
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////// ClientCommandPlugin methods /////////////////////
-    ////////////////////////////////////////////////////////////////////////
-
-
-    @Override
-    public
-    void registerCommands(CommandDispatcher<CottonClientCommandSource> cd) {
-        cd.register(
-            literal("tw")
+    private
+    void registerCommands() {
+        ClientCommandManager.DISPATCHER.register(
+            ClientCommandManager.literal("tw")
                 .then(
-                    literal("on").executes(c->{
+                    ClientCommandManager.literal("on").executes(c->{
                         instance.cmdOn(MinecraftClient.getInstance().player);
                         return 1;
                     })
                 )
                 .then(
-                    literal("off").executes(c->{
+                    ClientCommandManager.literal("off").executes(c->{
                         instance.cmdOff(MinecraftClient.getInstance().player);
                         return 1;
                     })
                 )
                 .then(
-                    literal("help").executes(c->{
+                    ClientCommandManager.literal("help").executes(c->{
                         instance.cmdHelp(MinecraftClient.getInstance().player);
                         return 1;
                     })
@@ -209,6 +185,24 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
                 })
         );
     }
+
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////// ClientModInitializer methods ////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    @Override
+    public void onInitializeClient() {
+        instance = this;
+        ClientTickCallback.EVENT.register((mc)->{
+            onTick(mc);
+        });
+
+        registerCommands();
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////// ClientCommandPlugin methods /////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
 
     ////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
