@@ -6,14 +6,7 @@ plugins {
 }
 
 repositories {
-	maven {
-        // For ClientCommands mod.
-        // See https://github.com/CottonMC/ClientCommands
-		name = 'CottonMC'
-		url = 'http://server.bbkr.space:8081/artifactory/libs-snapshot'
-	}    
 }
-
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -34,12 +27,6 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it
 	// anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	// See https://github.com/CottonMC/ClientCommands
-	// "include" does jar-in-jar for the ClientCommands mod, so that mod
-	// will be included in our JAR file.
-	modCompile "io.github.cottonmc:cotton-client-commands:${project.cmd_version}"
-	include "io.github.cottonmc:cotton-client-commands:${project.cmd_version}"
 }
 
 processResources {
