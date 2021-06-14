@@ -13,8 +13,8 @@ import com.extracraftx.minecraft.togglewalk.interfaces.ToggleableKeyBinding;
 import com.extracraftx.minecraft.togglewalk.mixin.KeyBindingMixin;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.text.LiteralText;
 
@@ -77,9 +77,9 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
 
         long time = mc.world.getTime();
         for (int i = 0; i < tuples.length; i++) {
-            boolean pressed    = wasPressed.get(tuples[i].base.getId());
+            boolean pressed    = wasPressed.get(tuples[i].base.getTranslationKey());
             boolean oppPressed = tuples[i].opposite == null ?
-                false : wasPressed.get(tuples[i].opposite.getId());
+                false : wasPressed.get(tuples[i].opposite.getTranslationKey());
             tuples[i].toggleable.handleToggleTick(time, pressed, oppPressed);
         }
     }
@@ -121,7 +121,7 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
                 continue;
             }
 
-            usedBindings.add(tup.base.getId());
+            usedBindings.add(tup.base.getTranslationKey());
             tup.toggleable.setID(toggle.toggle);
             tup.toggleable.setKeyTapDelay(conf.keyTapDelay);
 
@@ -133,7 +133,7 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
                                 toggle.untoggle + "'");
                     continue;
                 }
-                usedBindings.add(tup.opposite.getId());
+                usedBindings.add(tup.opposite.getTranslationKey());
             }
             tupleList.add(tup);
         }
@@ -143,7 +143,7 @@ public class ToggleWalk implements ClientModInitializer, ClientCommandPlugin {
     ///////////////////////////////////////////////////////////////////////////
 
     private void sendMsg(ClientPlayerEntity sender, String msg) {
-        sender.addChatMessage(new LiteralText(msg), false);
+        sender.sendMessage(new LiteralText(msg), false);
     }
 
     private void cmdOn(ClientPlayerEntity sender) {

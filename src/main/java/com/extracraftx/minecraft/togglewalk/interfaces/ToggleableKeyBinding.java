@@ -1,8 +1,7 @@
 package com.extracraftx.minecraft.togglewalk.interfaces;
 
 import java.util.Map;
-
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 
 public interface ToggleableKeyBinding {
     public Map<String,KeyBinding> getKeysIdMap();

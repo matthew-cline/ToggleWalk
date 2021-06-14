@@ -1,7 +1,7 @@
 package com.extracraftx.minecraft.togglewalk.mixin;
 
 import java.util.Map;
-
+import net.minecraft.client.option.KeyBinding;
 import com.extracraftx.minecraft.togglewalk.interfaces.ToggleableKeyBinding;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -10,8 +10,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import net.minecraft.client.options.KeyBinding;
 
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin implements ToggleableKeyBinding{
